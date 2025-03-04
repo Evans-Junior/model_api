@@ -1,20 +1,28 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import requests
+import pandas as pd
+import numpy as np
 
 app = FastAPI()
 OLLAMA_API_URL = "http://localhost:11434/api/generate"
 
-# Define request model
+# Load dataset
+df = pd.read_csv("balanced_dataset.csv")
+
+# Define request models
 class PromptRequest(BaseModel):
     prompt: str
+
+class SensorRequest(BaseModel):
+    sensors: list[float]
 
 @app.post("/generate")
 def generate_text(request: PromptRequest):
     payload = {
         "model": "meditron:7b",
         "prompt": request.prompt,
-        "stream": True
+        "stream": False
     }
     
     response = requests.post(OLLAMA_API_URL, json=payload)
@@ -23,6 +31,20 @@ def generate_text(request: PromptRequest):
         raise HTTPException(status_code=response.status_code, detail=response.text)
     
     return response.json()
+
+@app.post("/find_similar")
+def find_similar(request: SensorRequest):
+    if len(request.sensors) != 8:
+        raise HTTPException(status_code=400, detail="Exactly 8 sensor values are required")
+    
+    # Compute Euclidean distance
+    sensor_values = np.array(request.sensors)
+    df["distance"] = df.iloc[:, :-1].apply(lambda row: np.linalg.norm(row.values - sensor_values), axis=1)
+    
+    # Get top 5 closest matches
+    similar_rows = df.nsmallest(5, "distance")[["Sensor_1", "Sensor_2", "Sensor_3", "Sensor_4", "Sensor_5", "Sensor_6", "Sensor_7", "Sensor_8", "label"]]
+    
+    return similar_rows.to_dict(orient="records")
 
 if __name__ == "__main__":
     import uvicorn
