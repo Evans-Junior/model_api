@@ -15,8 +15,15 @@ def call_ollama(prompt):
         OLLAMA_URL,
         json={"model": "meditron", "prompt": prompt}
     )
+
+    # Debugging: Print full response
+    print("Ollama Response:", response.text)
+
     if response.status_code == 200:
-        return response.json().get("response", "No response from model")
+        try:
+            return response.json().get("response", "No response from model")
+        except ValueError as e:
+            return f"JSON Decode Error: {e}, Response Text: {response.text}"
     else:
         return f"Error: {response.status_code}, {response.text}"
 
