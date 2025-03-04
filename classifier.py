@@ -24,14 +24,27 @@ knn.fit(df[sensor_columns])
 #     return classification, similar_cases
 
 
+import numpy as np
+
 def classify_input(sensor_data):
-    input_values = np.array(list(sensor_data.values())).reshape(1, -1)
+    try:
+        # Extract values from the dictionary (ensuring order)
+        input_values = np.array([sensor_data[sensor] for sensor in [
+            "SP-3", "MQ-3", "TGS 822", "MQ-138", "MQ-137", "TGS 813", "TGS-800", "MQ-135"
+        ]], dtype=float).reshape(1, -1)
 
-    # Debugging print: Check if input shape is correct
-    print(f"Input shape: {input_values.shape}")  # Should be (1, 8)
+        # Debugging: Check the shape of input_values
+        print(f"Processed Input Shape: {input_values.shape}")  # Should be (1, 8)
 
-    distances, indices = knn.kneighbors(input_values)
-    similar_cases = df.iloc[indices[0]]  # Retrieve similar cases
-    classification = similar_cases["label"].mode()[0]  # Most common label
+        # Run KNN classification
+        distances, indices = knn.kneighbors(input_values)
+        similar_cases = df.iloc[indices[0]]
+        classification = similar_cases["label"].mode()[0]
 
-    return classification, similar_cases.to_dict()
+        return classification, similar_cases.to_dict()
+
+    except KeyError as e:
+        return f"Missing sensor data: {e}"
+    except Exception as e:
+        return f"Error processing input: {str(e)}"
+
