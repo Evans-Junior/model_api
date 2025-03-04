@@ -10,18 +10,24 @@ app = FastAPI()
 OLLAMA_URL = "http://localhost:11434/api/generate"  # Ensure Ollama is running on this port
 
 def call_ollama(prompt):
-    """Sends a request to the Ollama model and returns the response."""
+    """Sends a request to the Ollama model and correctly handles streamed responses."""
     response = requests.post(
         OLLAMA_URL,
-        json={"model": "meditron", "prompt": prompt}
+        json={"model": "meditron", "prompt": prompt, "stream": False}  # Force non-streaming mode
     )
 
-    # Debugging: Print full response
-    print("Ollama Response:", response.text)
+    print("Ollama Raw Response:", response.text)  # Debugging
 
     if response.status_code == 200:
         try:
-            return response.json().get("response", "No response from model")
+            json_data = response.json()
+            
+            # If it's a list of responses, concatenate them
+            if isinstance(json_data, list):
+                return " ".join([item.get("response", "") for item in json_data])
+            else:
+                return json_data.get("response", "No response from model")
+        
         except ValueError as e:
             return f"JSON Decode Error: {e}, Response Text: {response.text}"
     else:

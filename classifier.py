@@ -25,13 +25,22 @@ knn.fit(df[sensor_columns])
 
 
 import numpy as np
+
 def classify_input(sensor_data):
     try:
-        # Correct sensor order from dataset
+        # Expected sensor keys
         sensor_order = ["SP-3", "MQ-3", "TGS 822", "MQ-138", "MQ-137", "TGS 813", "TGS-800", "MQ-135"]
+        
+        # Debugging: Print received sensor keys
+        print(f"Received Sensor Keys: {list(sensor_data.keys())}")
 
-        # Ensure all sensors exist in input
-        input_values = np.array([[sensor_data[sensor] for sensor in sensor_order]], dtype=float)  # Fix reshaping
+        # Validate if all required sensors are present
+        missing_sensors = [s for s in sensor_order if s not in sensor_data]
+        if missing_sensors:
+            return "error", f"Missing sensor data: {missing_sensors}"
+
+        # Convert to NumPy array
+        input_values = np.array([[sensor_data[sensor] for sensor in sensor_order]], dtype=float)
 
         print(f"Processed Input Shape: {input_values.shape}")  # Should be (1, 8)
 
@@ -39,10 +48,9 @@ def classify_input(sensor_data):
         distances, indices = knn.kneighbors(input_values)
         similar_cases = df.iloc[indices[0]]
 
-        classification = similar_cases["label"].mode()[0]  # Get most common label
+        classification = similar_cases["label"].mode()[0]  # Most common label
 
-        return classification, similar_cases.to_dict(orient="records")  # Ensure correct format
-    except KeyError as e:
-        return "error", f"Missing sensor data: {e}"
+        return classification, similar_cases.to_dict(orient="records")
+    
     except Exception as e:
         return "error", f"Error processing input: {str(e)}"
