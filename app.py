@@ -44,7 +44,10 @@ def find_similar(request: SensorRequest):
     # Get top 5 closest matches
     similar_rows = df.nsmallest(5, "distance")[["Sensor_1", "Sensor_2", "Sensor_3", "Sensor_4", "Sensor_5", "Sensor_6", "Sensor_7", "Sensor_8", "label"]]
     
-    return similar_rows.to_dict(orient="records")
+    # Predict label by selecting the most common label among closest matches
+    predicted_label = similar_rows["label"].mode()[0] if not similar_rows["label"].empty else None
+    
+    return {"similar_matches": similar_rows.to_dict(orient="records"), "predicted_label": predicted_label}
 
 if __name__ == "__main__":
     import uvicorn
