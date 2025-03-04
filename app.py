@@ -41,7 +41,7 @@ def find_similar(request: SensorRequest):
         raise HTTPException(status_code=400, detail="Exactly 8 sensor values are required")
     
     # Ensure sensor columns exist
-    sensor_columns = [col for col in df.columns if "Sensor_" in col]
+    sensor_columns = [col for col in df.columns if "sensor_" in col]
     if len(sensor_columns) != 8:
         raise HTTPException(status_code=500, detail=f"Expected 8 sensor columns, found {len(sensor_columns)}: {sensor_columns}")
     
