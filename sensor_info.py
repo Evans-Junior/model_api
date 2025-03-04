@@ -1,12 +1,12 @@
 sensor_definitions = {
-    "Sensor_1": "Measures exhaled breath temperature.",
-    "Sensor_2": "Detects oxygen levels in breath.",
-    "Sensor_3": "Measures carbon dioxide concentration.",
-    "Sensor_4": "Detects nitrogen compounds in breath.",
-    "Sensor_5": "Monitors volatile organic compounds (VOCs).",
-    "Sensor_6": "Detects methane and other hydrocarbon gases.",
-    "Sensor_7": "Measures exhaled breath humidity.",
-    "Sensor_8": "Detects sulfur compounds indicating lung function."
+    "sensor_1": "Measures exhaled breath temperature.",
+    "sensor_2": "Detects oxygen levels in breath.",
+    "sensor_3": "Measures carbon dioxide concentration.",
+    "sensor_4": "Detects nitrogen compounds in breath.",
+    "sensor_5": "Monitors volatile organic compounds (VOCs).",
+    "sensor_6": "Detects methane and other hydrocarbon gases.",
+    "sensor_7": "Measures exhaled breath humidity.",
+    "sensor_8": "Detects sulfur compounds indicating lung function."
 }
 
 def interpret_sensor_data(sensor_data):
