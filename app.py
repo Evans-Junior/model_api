@@ -3,8 +3,23 @@ from classifier import classify_input
 from meditron import run_meditron_health_assistant
 from sensor_info import interpret_sensor_data
 import time
+import requests
 
 app = FastAPI()
+
+OLLAMA_URL = "http://localhost:11434/api/generate"  # Ensure Ollama is running on this port
+
+def call_ollama(prompt):
+    """Sends a request to the Ollama model and returns the response."""
+    response = requests.post(
+        OLLAMA_URL,
+        json={"model": "meditron", "prompt": prompt}
+    )
+    if response.status_code == 200:
+        return response.json().get("response", "No response from model")
+    else:
+        return f"Error: {response.status_code}, {response.text}"
+
 
 @app.post("/predict")
 async def predict_health(sensor_data: dict):
@@ -26,7 +41,7 @@ async def predict_health(sensor_data: dict):
         """
 
         # Step 4: Get Meditron Model Advice
-        medical_advice = run_meditron_health_assistant(final_prompt)
+        medical_advice = call_ollama(final_prompt)
 
         processing_time = round(time.time() - start_time, 2)
 
