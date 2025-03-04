@@ -14,7 +14,7 @@ def generate_text(request: PromptRequest):
     payload = {
         "model": "meditron:7b",
         "prompt": request.prompt,
-        "stream": False
+        "stream": True
     }
     
     response = requests.post(OLLAMA_API_URL, json=payload)
