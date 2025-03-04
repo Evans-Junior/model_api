@@ -6,23 +6,37 @@ import time
 
 app = FastAPI()
 
-@app.post("/predict/")
-async def predict_health(request_data: dict):
+@app.post("/predict")
+async def predict_health(sensor_data: dict):
     try:
-        sensor_data = request_data["sensor_data"]
+        start_time = time.time()
 
-        # Call classify_input function
+        # Step 1: Classify input using RAG
         classification, similar_cases = classify_input(sensor_data)
 
-        # Handle errors properly
-        if classification == "error":
-            return {"status": "error", "message": similar_cases}
+        # Step 2: Interpret sensor data
+        sensor_interpretations = interpret_sensor_data(sensor_data)
+
+        # Step 3: Prepare final prompt for Meditron
+        final_prompt = f"""
+        Based on similar cases from the dataset, this case is classified as: {classification}.
+        Sensor Data Analysis:
+        {sensor_interpretations}
+        Medical AI Advice Needed.
+        """
+
+        # Step 4: Get Meditron Model Advice
+        medical_advice = run_meditron_health_assistant(final_prompt)
+
+        processing_time = round(time.time() - start_time, 2)
 
         return {
             "status": "success",
+            "processing_time": f"{processing_time} seconds",
             "classification": classification,
-            "similar_cases": similar_cases
+            "sensor_interpretations": sensor_interpretations,
+            "similar_cases": similar_cases,
+            "medical_advice": medical_advice
         }
-
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+            return {"status": "error", "message": str(e)}
