@@ -25,16 +25,16 @@ sensor_definitions = {
     "Sensor_8": "Detects sulfur compounds indicating lung function."
 }
 
-# Define value boundaries for each sensor
+# Sensor boundaries based on established thresholds
 sensor_boundaries = {
-    "Sensor_1": {"bad": (0, 10), "moderate": (10, 20), "healthy": (20, 30)},
-    "Sensor_2": {"bad": (0, 5), "moderate": (5, 15), "healthy": (15, 25)},
-    "Sensor_3": {"bad": (0, 300), "moderate": (300, 500), "healthy": (500, 700)},
-    "Sensor_4": {"bad": (0, 100), "moderate": (100, 200), "healthy": (200, 300)},
-    "Sensor_5": {"bad": (0, 50), "moderate": (50, 100), "healthy": (100, 150)},
-    "Sensor_6": {"bad": (0, 10), "moderate": (10, 20), "healthy": (20, 30)},
-    "Sensor_7": {"bad": (0, 30), "moderate": (30, 60), "healthy": (60, 90)},
-    "Sensor_8": {"bad": (0, 5), "moderate": (5, 10), "healthy": (10, 15)}
+    "Sensor_1": {"bad": (0, 35), "moderate": (35, 37), "healthy": (37, 42)},
+    "Sensor_2": {"bad": (0, 18), "moderate": (18, 20), "healthy": (20, 25)},
+    "Sensor_3": {"bad": (1000, 5000), "moderate": (400, 1000), "healthy": (0, 400)},
+    "Sensor_4": {"bad": (500, 1000), "moderate": (200, 500), "healthy": (0, 200)},
+    "Sensor_5": {"bad": (500, 1000), "moderate": (100, 500), "healthy": (0, 100)},
+    "Sensor_6": {"bad": (5000, 10000), "moderate": (1000, 5000), "healthy": (0, 1000)},
+    "Sensor_7": {"bad": (100, 200), "moderate": (50, 100), "healthy": (0, 50)},
+    "Sensor_8": {"bad": (300, 600), "moderate": (50, 300), "healthy": (0, 50)}
 }
 
 def categorize_sensor_values(sensor_data):
